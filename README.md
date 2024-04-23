@@ -16,7 +16,7 @@
 
 ## 怎么使用？
 
-1、用WPS打开。
+1、用WPS打开。在 安全警告 中点击 启用宏。（不信任的话，你可以先看宏的代码，然后再启用）
 
 2、从KIMI 申请到 apiKey 填到 工作表'Config_KIMI' 的 apiKey 的 value项里。
 
@@ -29,24 +29,27 @@
 
 
 
-## use AI in Excel by Macros
+## What is this?
 
-It is easy to edit message.
+It's a macro in Excel that calls an AI interface.
 
-It is easy to modify the AI response for better corrective AI response as you wish way.
+This is very convenient as you can easily get the content returned by the AI.
 
+Moreover, it's very easy to tamper with AI's reply, so that some of AI's refusal can be modified into the content we agree with, breaking through the role restrictions of AI.
 
+At the same time, you can obtain multiple replies, take the best content, and splice them together, which is conducive to the subsequent replies of AI being in line with our expectations.
 
-## How to Use
+You can get AI back on the right track of Q&A through text operation alone after it goes astray, which is not easy with other UIs.
 
+## How to use it?
 
-1、 user WPS or OFFICE. allow Macros.
+1. Open with WPS. Click "Enable macro" in the security warning. (If you don't trust it, you can first look at the macro code and then enable it)
 
-2、 get key from OPENAI or KIMI(https://platform.moonshot.cn/console) . fill in sheet 'Config_KIMI' apiKey the value.
+2. Apply for an apiKey from KIMI and fill it into the value item of apiKey in the Config_KIMI worksheet.
 
-3、 switch to sheet 'AIAgentTemplate'  click 'send' button. if user with content text.
+3. Switch to the AIAgentTemplate worksheet and click send. Just make sure the last line is user and there is content in the content.
 
-4、 wait about 2 minutes if not error in  console text.
+4. Wait for about 1 minute. If the text is long, it will take longer. As long as there is a console prompt, it means it has been sent out.
 
 
 for lazy me,hope you good luck.
