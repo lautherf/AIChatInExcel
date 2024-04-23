@@ -14,7 +14,7 @@ How to Use
 
 2、 get key from OPENAI or KIMI(https://platform.moonshot.cn/console) . fill in sheet 'Config_KIMI' apiKey.
 
-3、 say something in user content and click 'send' button.
+3、 switch to sheet 'AIAgentTemplate'  click 'send' button. if user with content text.
 
 4、 wait about 2 minutes if not error in  console text.
 
