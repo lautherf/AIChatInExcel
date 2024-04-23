@@ -22,4 +22,4 @@ How to Use
 for lazy me,hope you good luck.
 
 
-![Uploading 7ac33b3a67d20f366f16d9440abe975.png…]()
+![7ac33b3a67d20f366f16d9440abe975](https://github.com/lautherf/AIChatInExcel/assets/6778243/60d6dea0-a8fe-4e6f-8d03-edb8db1bbc9a)
