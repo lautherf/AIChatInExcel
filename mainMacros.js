@@ -76,6 +76,71 @@ function callChatAPI() {
     kimi_XHR(apiUrl, apiKey, params);
 }
 
+function callBaiduAPI(){
+	// Get the configuration sheet name from the workspace configuration.
+	var configSheetName = getWorkspaceConfig().get('Config_AI');
+
+	// Read the configuration data from the specified range.
+	let baiduConfig = readConfig(configSheetName + '!A:B');
+	var apiUrl = baiduConfig.get('apiUrl');
+	var access_token = baiduConfig.get('access_token');
+	var accessUrl = apiUrl + '?access_token=' + access_token;
+	var responseNum = baiduConfig.get('responseNum');
+	var temperature = baiduConfig.get('temperature');
+	
+	var params = {
+		"messages": adapterBaiduMessage(getConversationMessage()),
+		"temperature": temperature,
+	};
+	baidu_XHR(accessUrl, params);
+	
+}
+
+function baidu_XHR(apiUrl, params) {
+	Debug.Print('Request Content:' + JSON.stringify(params));
+	
+	var xhr = new XMLHttpRequest();
+	xhr.open('POST', apiUrl, true);
+	xhr.setRequestHeader('Content-Type', 'application/json');
+	xhr.onreadystatechange = function() {		
+		try{
+			var readyState = xhr.readyState;
+			var status = xhr.status;
+			var responseText = xhr.responseText;
+			var result = xhr.result;
+			var responseJson = JSON.parse(xhr.responseText);
+			if (xhr.status != 200) {
+				var responseTextErrorMessage = responseJson.error.message;
+				var responseTextErrorType = responseJson.error.type;
+				Debug.Print('Exception:' + responseTextErrorMessage + responseTextErrorType);
+				appendMessage('console',xhr.readyState + ' ' + responseTextErrorMessage + ' ' + responseTextErrorType);
+			}else if (xhr.readyState === 4 && xhr.status === 200) {
+				let error_code = responseJson.error_code;
+				if(error_code){
+					appendMessage('console',responseText);
+				}else{
+				    deleteLastMessage();
+					Debug.Print('xhr.responseText：' + xhr.responseText);
+					Debug.Print('Response Text:' + responseJson.result);
+					appendMessage('assistant',responseJson.result);
+					appendMessage('user','');
+				}
+			}else if (xhr.readyState === 2 || xhr.readyState === 3) {
+				Debug.Print('Processing...');
+			}	
+		}catch(e){
+			Debug.Print(e);
+		}
+		
+	
+	};
+	appendMessage('console','The request has been sent. If the content is extensive, it may take a few more seconds.');
+	xhr.send(JSON.stringify(params));
+	
+}
+
+
+
 /**
  * Sends an HTTP request to the specified API URL.
  * @param {string} apiUrl - The API URL to send the request to.
@@ -221,6 +286,42 @@ function getConversationMessage_AIAgent() {
     return adapterAIAgentMessage(getAIAgentConversationMessageByName(ActiveSheetName));
 }
 
+function adapterBaiduMessage(messageArray){
+	let rsArray = new Array();
+	let isUserNext = true;
+	
+	for(let i = 0; i< messageArray.length; i++){
+		let tempObj = messageArray[i];
+		let tempObjRole = tempObj['role'];
+		let tempObjContent = '' + tempObj['content'];
+		if('user' == tempObjRole && isUserNext){
+			let obj = new Object();
+			obj.role = tempObjRole;
+			obj.content = tempObjContent;
+			rsArray.push(obj);
+			isUserNext = false;
+		}else if('assistant' == tempObjRole && !isUserNext){
+			let obj = new Object();
+			obj.role = tempObjRole;
+			obj.content = tempObjContent;
+			rsArray.push(obj);
+			isUserNext = true;
+		}else if('system' == tempObjRole && !isUserNext){
+			let obj = new Object();
+			obj.role = 'user';
+			obj.content = "follow my order, " + tempObjContent;
+			rsArray.push(obj);
+			let obj_2 = new Object();
+			obj_2.role = 'assistant';
+			obj_2.content = "yes , I agree.";
+			rsArray.push(obj_2);
+			isUserNext = true;
+		}
+	}
+	
+	return rsArray;
+}
+
 // Formats the messages from the sheet into a consistent object format
 function adapterAIAgentMessage(messageArray) {
     let rsArray = new Array();
@@ -304,8 +405,15 @@ function getWorkspaceConfig() {
 }
 
 function CommandButtonClick() {
-    callChatAPI()
+	let envConfig = readConfig('WorkspaceConfig!A:B');
+	var configSheetName = envConfig.get('Config_AI');
+	if('Config_Baidu' == configSheetName){
+		callBaiduAPI();
+	}else{
+		callChatAPI()
+	}
 }
+
 
 function CommandButton1_Click() {
     CommandButtonClick();
